@@ -1,20 +1,44 @@
 package com.example.creditbook
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.creditbook.ui.AddCustomerActivity
+import com.example.creditbook.ui.CustomerAdapter
+import com.example.creditbook.ui.CustomerListViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
+
+    private val viewModel: CustomerListViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        val list = findViewById<RecyclerView>(R.id.recyclerCustomers)
+        val emptyText = findViewById<TextView>(R.id.textEmpty)
+
+        val adapter = CustomerAdapter { customer ->
+            // Later: open the Customer details screen (Member 4's part)
+            Toast.makeText(this, customer.name, Toast.LENGTH_SHORT).show()
+        }
+        list.layoutManager = LinearLayoutManager(this)
+        list.adapter = adapter
+
+        viewModel.customers.observe(this) { customers ->
+            adapter.submitList(customers)
+            emptyText.isVisible = customers.isEmpty()   // friendly empty state
+        }
+
+        findViewById<FloatingActionButton>(R.id.fabAddCustomer).setOnClickListener {
+            startActivity(Intent(this, AddCustomerActivity::class.java))
         }
     }
 }

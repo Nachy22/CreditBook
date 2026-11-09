@@ -9,8 +9,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.creditbook.ui.AddCustomerActivity
-import com.example.creditbook.ui.AddEntryActivity
 import com.example.creditbook.ui.CustomerAdapter
+import com.example.creditbook.ui.CustomerDetailActivity
 import com.example.creditbook.ui.CustomerListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -26,20 +26,25 @@ class MainActivity : AppCompatActivity() {
         val emptyText = findViewById<TextView>(R.id.textEmpty)
 
         val adapter = CustomerAdapter { customer ->
-            // TEMPORARY: later this opens the Customer details screen (Member 4)
-            val intent = Intent(this, AddEntryActivity::class.java)
-            intent.putExtra(AddEntryActivity.EXTRA_CUSTOMER_ID, customer.id)
+            val intent = Intent(this, CustomerDetailActivity::class.java)
+            intent.putExtra(
+                CustomerDetailActivity.EXTRA_CUSTOMER_ID,
+                customer.id
+            )
             startActivity(intent)
         }
+
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapter
 
         viewModel.customers.observe(this) { customers ->
             adapter.submitList(customers)
-            emptyText.isVisible = customers.isEmpty()   // friendly empty state
+            emptyText.isVisible = customers.isEmpty()
         }
 
-        findViewById<FloatingActionButton>(R.id.fabAddCustomer).setOnClickListener {
+        findViewById<FloatingActionButton>(
+            R.id.fabAddCustomer
+        ).setOnClickListener {
             startActivity(Intent(this, AddCustomerActivity::class.java))
         }
     }

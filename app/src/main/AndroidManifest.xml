@@ -29,6 +29,11 @@
         <activity
             android:name=".ui.AddEntryActivity"
             android:windowSoftInputMode="adjustResize" />
+           
+            <activity
+    android:name=".ui.CustomerDetailActivity"
+    android:exported="false" />
+    
     </application>
 
 </manifest>

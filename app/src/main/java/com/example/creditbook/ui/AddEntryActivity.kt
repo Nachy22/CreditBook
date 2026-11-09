@@ -30,6 +30,28 @@ class AddEntryActivity : AppCompatActivity() {
 
         val title = findViewById<TextView>(R.id.textTitle)
         val typeGroup = findViewById<RadioGroup>(R.id.radioType)
+        // Select the requested entry type only when first opening the form.
+// After rotation, Android restores the user's current selection.
+if (savedInstanceState == null) {
+    when (
+        intent.getStringExtra(
+            CustomerDetailActivity.EXTRA_ENTRY_TYPE
+        )
+    ) {
+        com.example.creditbook.data.EntryType.DEBT ->
+            typeGroup.check(R.id.radioDebt)
+
+        com.example.creditbook.data.EntryType.PAYMENT -> {
+            val paymentRadioId = (0 until typeGroup.childCount)
+                .map { typeGroup.getChildAt(it) }
+                .filterIsInstance<android.widget.RadioButton>()
+                .firstOrNull { it.id != R.id.radioDebt }
+                ?.id
+
+            paymentRadioId?.let { typeGroup.check(it) }
+        }
+    }
+}
         val amountLayout = findViewById<TextInputLayout>(R.id.layoutAmount)
         val amountInput = findViewById<TextInputEditText>(R.id.inputAmount)
         val noteInput = findViewById<TextInputEditText>(R.id.inputNote)

@@ -3,13 +3,13 @@ package com.example.creditbook
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.creditbook.ui.AddCustomerActivity
+import com.example.creditbook.ui.AddEntryActivity
 import com.example.creditbook.ui.CustomerAdapter
 import com.example.creditbook.ui.CustomerListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -26,8 +26,10 @@ class MainActivity : AppCompatActivity() {
         val emptyText = findViewById<TextView>(R.id.textEmpty)
 
         val adapter = CustomerAdapter { customer ->
-            // Later: open the Customer details screen (Member 4's part)
-            Toast.makeText(this, customer.name, Toast.LENGTH_SHORT).show()
+            // TEMPORARY: later this opens the Customer details screen (Member 4)
+            val intent = Intent(this, AddEntryActivity::class.java)
+            intent.putExtra(AddEntryActivity.EXTRA_CUSTOMER_ID, customer.id)
+            startActivity(intent)
         }
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapter

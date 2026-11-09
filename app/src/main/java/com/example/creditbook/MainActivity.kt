@@ -1,10 +1,16 @@
 package com.example.creditbook
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +24,21 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: CustomerListViewModel by viewModels()
 
+    // Register before the activity starts.
+    private val notificationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { granted ->
+            val message = if (granted) {
+                "Notifications allowed."
+            } else {
+                "Notifications are off. You can still use CreditBook."
+            }
+
+            // Inform the trader without blocking the app.
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,7 +47,10 @@ class MainActivity : AppCompatActivity() {
         val emptyText = findViewById<TextView>(R.id.textEmpty)
 
         val adapter = CustomerAdapter { customer ->
-            val intent = Intent(this, CustomerDetailActivity::class.java)
+            val intent = Intent(
+                this,
+                CustomerDetailActivity::class.java
+            )
             intent.putExtra(
                 CustomerDetailActivity.EXTRA_CUSTOMER_ID,
                 customer.id
@@ -45,7 +69,45 @@ class MainActivity : AppCompatActivity() {
         findViewById<FloatingActionButton>(
             R.id.fabAddCustomer
         ).setOnClickListener {
-            startActivity(Intent(this, AddCustomerActivity::class.java))
+            startActivity(
+                Intent(this, AddCustomerActivity::class.java)
+            )
         }
+
+        if (savedInstanceState == null) {
+            requestNotificationPermissionIfNeeded()
+        }
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        // Earlier Android versions do not use this runtime permission.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return
+        }
+
+        val permissionGranted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (permissionGranted) return
+
+        val preferences = getSharedPreferences(
+            "notification_preferences",
+            MODE_PRIVATE
+        )
+
+        // Remember the request so we do not repeatedly prompt after denial.
+        if (preferences.getBoolean("permission_requested", false)) {
+            return
+        }
+
+        preferences.edit()
+            .putBoolean("permission_requested", true)
+            .apply()
+
+        notificationPermissionLauncher.launch(
+            Manifest.permission.POST_NOTIFICATIONS
+        )
     }
 }

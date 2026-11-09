@@ -20,6 +20,7 @@ import com.example.creditbook.ui.CustomerAdapter
 import com.example.creditbook.ui.CustomerDetailActivity
 import com.example.creditbook.ui.CustomerListViewModel
 import com.example.creditbook.ui.summary.SummaryActivity
+import com.example.creditbook.work.ReminderScheduler
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -65,6 +66,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.buttonSummary).setOnClickListener {
             startActivity(Intent(this, SummaryActivity::class.java))
         }
+
+        // Start the daily overdue check (does nothing if already scheduled)
+        ReminderScheduler.scheduleDaily(this)
+
 
         if (savedInstanceState == null) {
             requestNotificationPermissionIfNeeded()

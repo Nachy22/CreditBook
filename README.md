@@ -60,5 +60,16 @@ To test the reminder: add a debt due tomorrow, move the emulator's date forward 
 **Where we learned it:** _[WorkManager owner to complete]_
 
 **What was difficult:** _[WorkManager owner to complete]_
+What went wrong and how we fixed it.
 
+Our project uses the newest Android Gradle Plugin (9.x), which has Kotlin built in. Older KSP versions refuse to work with it, so the project would not build. We fixed it by using KSP 2.3.11, which supports the built-in Kotlin.
+The Room files were first written with the package name com.zut.creditbook, but the project is com.example.creditbook, so nothing could find them. We changed the first line of every file to match.
+[Room owner: add anything else that went wrong for you, in your own words]
+
+Where we learned it.
+
+Android Developers: "Schedule tasks with WorkManager" (developer.android.com/develop/background-work/background-tasks/persistent)
+Android Developers: "Create a notification" and "Create and manage notification channels"
+Android Developers: "Notification runtime permission" (Android 13+)
+[WorkManager owner: add any other sources you used, such as codelabs or videos]
 

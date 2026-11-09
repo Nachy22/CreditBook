@@ -1,3 +1,13 @@
+
+| Full Name | Student Number |
+|-----------|----------------|
+| Nachula Nachamba | 2410157 |
+| Martin Muloshi | 2410009 |
+| Taizya Nakapende | 2410396|
+| Majata Hichimi | 2410181 |
+| Katendi Kamenga | 2410432|
+
+
 [README.md](https://github.com/user-attachments/files/34578888/README.md)
 # CreditBook
 

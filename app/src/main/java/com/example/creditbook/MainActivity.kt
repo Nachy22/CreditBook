@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,10 +19,10 @@ import com.example.creditbook.ui.AddCustomerActivity
 import com.example.creditbook.ui.CustomerAdapter
 import com.example.creditbook.ui.CustomerDetailActivity
 import com.example.creditbook.ui.CustomerListViewModel
+import com.example.creditbook.ui.summary.SummaryActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
-
     private val viewModel: CustomerListViewModel by viewModels()
 
     // Register before the activity starts.
@@ -34,8 +35,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 "Notifications are off. You can still use CreditBook."
             }
-
-            // Inform the trader without blocking the app.
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
 
@@ -47,17 +46,10 @@ class MainActivity : AppCompatActivity() {
         val emptyText = findViewById<TextView>(R.id.textEmpty)
 
         val adapter = CustomerAdapter { customer ->
-            val intent = Intent(
-                this,
-                CustomerDetailActivity::class.java
-            )
-            intent.putExtra(
-                CustomerDetailActivity.EXTRA_CUSTOMER_ID,
-                customer.id
-            )
+            val intent = Intent(this, CustomerDetailActivity::class.java)
+            intent.putExtra(CustomerDetailActivity.EXTRA_CUSTOMER_ID, customer.id)
             startActivity(intent)
         }
-
         list.layoutManager = LinearLayoutManager(this)
         list.adapter = adapter
 
@@ -66,12 +58,12 @@ class MainActivity : AppCompatActivity() {
             emptyText.isVisible = customers.isEmpty()
         }
 
-        findViewById<FloatingActionButton>(
-            R.id.fabAddCustomer
-        ).setOnClickListener {
-            startActivity(
-                Intent(this, AddCustomerActivity::class.java)
-            )
+        findViewById<FloatingActionButton>(R.id.fabAddCustomer).setOnClickListener {
+            startActivity(Intent(this, AddCustomerActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.buttonSummary).setOnClickListener {
+            startActivity(Intent(this, SummaryActivity::class.java))
         }
 
         if (savedInstanceState == null) {
@@ -97,7 +89,7 @@ class MainActivity : AppCompatActivity() {
             MODE_PRIVATE
         )
 
-        // Remember the request so we do not repeatedly prompt after denial.
+        // Avoid repeatedly prompting after denial or dismissal.
         if (preferences.getBoolean("permission_requested", false)) {
             return
         }
